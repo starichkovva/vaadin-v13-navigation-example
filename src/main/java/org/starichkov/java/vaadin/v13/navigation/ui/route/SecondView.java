@@ -5,11 +5,11 @@ import com.vaadin.flow.router.Route;
 import org.starichkov.java.vaadin.v13.navigation.ui.layout.BaseComponentLayout;
 import org.starichkov.java.vaadin.v13.navigation.ui.layout.MainLayout;
 
-@PageTitle("One More View")
-@Route(value = "one-more", layout = MainLayout.class)
-public class OneMoreView extends BaseComponentLayout {
+@PageTitle("Second View")
+@Route(value = "second", layout = MainLayout.class)
+public class SecondView extends BaseComponentLayout {
 
-  public OneMoreView() {
+  public SecondView() {
     getStyle().set("background-color", "yellow");
   }
 }
