@@ -4,9 +4,14 @@ import com.vaadin.flow.component.HasElement;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.orderedlayout.FlexLayout;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.ParentLayout;
+import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.RouteData;
 import com.vaadin.flow.router.RouterLayout;
 import com.vaadin.flow.router.RouterLink;
+import java.util.List;
 import org.starichkov.java.vaadin.v13.navigation.ui.route.FirstView;
 import org.starichkov.java.vaadin.v13.navigation.ui.route.HomeView;
 import org.starichkov.java.vaadin.v13.navigation.ui.route.ThirdView;
@@ -16,20 +21,28 @@ public class MainLayout extends FlexLayout implements RouterLayout {
   private final ViewLayout viewLayout;
 
   public MainLayout() {
-    setWrapMode(WrapMode.NOWRAP);
+    setHeightFull();
+    getStyle().set("flex-direction", "column");
+
+    TopMenuBar topMenuBar = new TopMenuBar();
+    add(topMenuBar);
+
+    FlexLayout flexLayout = new FlexLayout();
+    flexLayout.setWrapMode(WrapMode.NOWRAP);
 
     MenuBar menuBar = new MenuBar();
-    add(menuBar);
+    flexLayout.add(menuBar);
     menuBar.setHeightFull();
 
     viewLayout = new ViewLayout();
-    add(viewLayout);
+    flexLayout.add(viewLayout);
     viewLayout.setHeightFull();
 
-    setFlexGrow(1.0, menuBar);
-    setFlexGrow(4.0, viewLayout);
+    flexLayout.setFlexGrow(1.0, menuBar);
+    flexLayout.setFlexGrow(4.0, viewLayout);
 
-    setHeightFull();
+    add(flexLayout);
+    flexLayout.setHeightFull();
   }
 
   @Override
@@ -65,5 +78,25 @@ class MenuBar extends BaseRootLayout {
     Button menuButtonThird = new Button("Third");
     menuButtonThird.addClickListener(e -> UI.getCurrent().navigate(ThirdView.class));
     add(menuButtonThird);
+  }
+}
+
+@ParentLayout(MainLayout.class)
+class TopMenuBar extends HorizontalLayout {
+
+  TopMenuBar() {
+    setWidthFull();
+
+    List<RouteData> routeData = UI.getCurrent().getRouter().getRegistry().getRegisteredRoutes();
+
+    routeData.forEach(routeData1 -> {
+      Route route = routeData1.getNavigationTarget().getAnnotation(Route.class);
+      PageTitle pageTitle = routeData1.getNavigationTarget().getAnnotation(PageTitle.class);
+      if (route != null && pageTitle != null) {
+        Button menuButton = new Button(pageTitle.value());
+        menuButton.addClickListener(e -> UI.getCurrent().navigate(route.value()));
+        add(menuButton);
+      }
+    });
   }
 }
